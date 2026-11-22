@@ -69,7 +69,7 @@ private data class TargetRuleUi(
 private val REDIRECT_RULES_UI = listOf(
     TargetRuleUi(
         key = ModulePrefs.KEY_METIS_COOLAPK_REDIRECT,
-        title = "酷安链接跳转 c001apk",
+        title = "酷安 → c001apk",
         officialLabel = "酷安",
         officialPkg = "com.coolapk.market",
         targetLabel = "c001apk",
@@ -77,7 +77,7 @@ private val REDIRECT_RULES_UI = listOf(
     ),
     TargetRuleUi(
         key = ModulePrefs.KEY_METIS_WEIBO_REDIRECT,
-        title = "微博链接跳转 Cobo",
+        title = "微博 → Cobo",
         officialLabel = "微博",
         officialPkg = "com.sina.weibo",
         targetLabel = "Cobo",
@@ -85,7 +85,7 @@ private val REDIRECT_RULES_UI = listOf(
     ),
     TargetRuleUi(
         key = ModulePrefs.KEY_METIS_BILIBILI_REDIRECT,
-        title = "哔哩哔哩链接跳转 BiliCO",
+        title = "哔哩哔哩 → BiliCO",
         officialLabel = "哔哩哔哩",
         officialPkg = "tv.danmaku.bili",
         targetLabel = "BiliCO",
@@ -167,14 +167,14 @@ private fun MainScreen() {
                 contentPadding = innerPadding.listPadding(top = 12.dp, bottom = 24.dp),
             ) {
                 item(key = "title_framework") {
-                    GroupTitle("框架与作用域 (API 102)")
+                    GroupTitle("框架")
                 }
                 item(key = "card_framework") {
                     FrameworkCard(context)
                 }
 
                 item(key = "title_rules") {
-                    GroupTitle("流体云跳转规则")
+                    GroupTitle("跳转规则")
                 }
                 item(key = "card_rules") {
                     Card(
@@ -210,8 +210,8 @@ private fun MainScreen() {
                             .padding(bottom = 16.dp),
                     ) {
                         ArrowPreference(
-                            title = "模块版本",
-                            summary = "${BuildConfig.VERSION_NAME} (LibXposed API 102)",
+                            title = "版本",
+                            summary = "v${BuildConfig.VERSION_NAME} · GPL-3.0",
                             onClick = {
                                 Toast.makeText(
                                     context,
@@ -219,24 +219,6 @@ private fun MainScreen() {
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             },
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                        ArrowPreference(
-                            title = "作用域",
-                            summary = "仅需勾选「智能服务 (${MainModule.METIS_PACKAGE})」",
-                            onClick = {},
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                        ArrowPreference(
-                            title = "开关行为",
-                            summary = "开启后重定向至对应第三方客户端并替换图标；关闭或未安装目标应用时恢复原版官方跳转",
-                            onClick = {},
-                        )
-                        HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                        ArrowPreference(
-                            title = "开源协议",
-                            summary = "GNU General Public License v3.0",
-                            onClick = {},
                         )
                     }
                 }
@@ -269,20 +251,15 @@ private fun RuleSwitchRow(
         }
     }
 
-    val statusText = when (installed) {
-        true -> "已安装 ${rule.targetPkg}"
-        false -> "未安装 ${rule.targetPkg}（当前保持系统原行为）"
-        null -> rule.targetPkg
-    }
-    val behaviorText = if (checked) {
-        "开启：流体云${rule.officialLabel}链接将打开 ${rule.targetLabel}"
-    } else {
-        "关闭：恢复${rule.officialLabel}官方客户端跳转"
+    val summaryText = when {
+        installed == false -> "未安装 ${rule.targetPkg}"
+        checked -> rule.targetPkg
+        else -> "已关闭（恢复${rule.officialLabel}官方跳转）"
     }
 
     SwitchPreference(
         title = rule.title,
-        summary = "$behaviorText\n$statusText",
+        summary = summaryText,
         startAction = {
             AppIcon(
                 pkg = rule.targetPkg,
@@ -306,39 +283,31 @@ private fun FrameworkCard(context: Context) {
             .padding(bottom = 16.dp),
     ) {
         ArrowPreference(
-            title = "框架连接状态",
+            title = "框架状态",
             summary = if (ScopeManager.isConnected) {
                 "${ScopeManager.frameworkName} ${ScopeManager.frameworkVersion} (API ${ScopeManager.apiVersion})"
             } else {
-                "未连接 / 请在 LSPosed 管理器中启用模块并勾选智能服务"
+                "未连接（请在 LSPosed 启用并勾选智能服务）"
             },
             onClick = {
                 val msg = if (ScopeManager.isConnected) {
-                    "已与 ${ScopeManager.frameworkName} 建立通信"
+                    "已连接 ${ScopeManager.frameworkName}"
                 } else {
-                    "未收到框架注入，请确认模块已启用"
+                    "请先在 LSPosed 启用模块"
                 }
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             },
         )
         HorizontalDivider(Modifier.padding(horizontal = 16.dp))
         ArrowPreference(
-            title = "配置通道",
-            summary = if (ScopeManager.isPrefsReady) {
-                "已连接，开关变更实时同步给智能服务"
-            } else {
-                "未连接：开关暂存在本地，请先启用模块并授权作用域"
-            },
+            title = "配置同步",
+            summary = if (ScopeManager.isPrefsReady) "已就绪" else "未连接",
             onClick = {},
         )
         HorizontalDivider(Modifier.padding(horizontal = 16.dp))
         ArrowPreference(
-            title = "向框架申请作用域",
-            summary = if (metisGranted) {
-                "已授权：智能服务 (${MainModule.METIS_PACKAGE})"
-            } else {
-                "点击向 LSPosed 申请「智能服务」作用域授权"
-            },
+            title = "作用域授权",
+            summary = if (metisGranted) "已授权 (${MainModule.METIS_PACKAGE})" else "点击申请智能服务作用域",
             onClick = {
                 ScopeManager.requestScope { _, message ->
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -396,7 +365,7 @@ private fun RestartMetisDialog(
             )
 
             Text(
-                text = "将结束「智能服务 (com.oplus.metis)」进程使其立即重新加载最新规则。",
+                text = "将结束「智能服务」进程以立即加载最新设置。",
                 modifier = Modifier.padding(bottom = 20.dp),
                 style = COUITheme.textStyles.body2,
                 textAlign = TextAlign.Center,

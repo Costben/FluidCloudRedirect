@@ -18,7 +18,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="ColorOS 流体云（智能服务 Metis）第三方客户端链接重定向：支持酷安 → c001apk、微博 → Cobo、哔哩哔哩 → BiliCO，各自可独立开关。" />
+            android:value="流体云链接重定向：酷安 → c001apk、微博 → Cobo、哔哩哔哩 → BiliCO" />
         <meta-data
             android:name="xposedminversion"
             android:value="102" />
