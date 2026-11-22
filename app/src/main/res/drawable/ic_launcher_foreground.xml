@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 流体云胶囊外框 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M34,36 L74,36 A18,18 0 0,1 74,72 L34,72 A18,18 0 0,1 34,36 Z"
+        android:fillAlpha="0.22" />
+    <!-- 重定向折线箭头 -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="5.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M35,58 C35,49 41,45 50,45 L69,45 M60,36 L71,45 L60,54" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M35,63 A4.5,4.5 0 1,1 35,72 A4.5,4.5 0 1,1 35,63 Z" />
+</vector>
